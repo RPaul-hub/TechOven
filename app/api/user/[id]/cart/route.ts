@@ -1,8 +1,5 @@
 import { connectToDB } from '@/app/api/dbconnection'
-import { products } from '@/lib/product-data'
 import { NextRequest } from 'next/server'
-
-type ShoppingCart = Record<string, string[]>
 
 type Params = {
     id: string
@@ -10,12 +7,6 @@ type Params = {
 
 type CartBody = {
     productId: string
-}
-
-const shoppingcarts : ShoppingCart = {
-    '1' : ['dfgdf-dsgdfgh-dfh', 'sdgsdfgh-sdgsgh-sdg', 'ryery-sdgsdg-xccb'],
-    '2' : ['asdasd-asdasd-asdas', 'qweqwe-qweqwe-qwe'],
-    '3' : ['zxcvbn-zxcvbn-zxcv']
 }
 
 // fetching cart for specifi user
@@ -82,22 +73,30 @@ export const POST = async (request: NextRequest, {params} : {params: Params}) =>
 
 export const DELETE = async (request: NextRequest, {params} : {params: Params}) => {
 
+    const { db } = await connectToDB();
+
     const resolvedParams = await Promise.resolve(params);
-    const userid = resolvedParams.id;
+    const userId = resolvedParams.id;
 
     const body: CartBody = await request.json();
     const productId = body.productId;
 
-    if(shoppingcarts[userid] === undefined){
-        return new Response("No cart items fround for the user!", {status: 404})
-    }
+    const updateCart = await db.collection('cartitems').findOneAndUpdate(
+        { userId },
+        { $pull: {productids: productId} },
+        { returnDocument: 'after'}
+    )
 
-    if(!shoppingcarts[userid].includes(productId)){
-        return new Response("product is not found in the cart!", {status: 404})
-    }
+    if(!updateCart)
+        return new Response(JSON.stringify([]),{
+        status: 202,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
 
-    shoppingcarts[userid] = shoppingcarts[userid].filter(p => p !== productId);
-    const cartProducts = shoppingcarts[userid].map(id => products.find(p => p.id === id))
+
+    const cartProducts = await db.collection('products').find({ id: { $in: updateCart.productids} }).toArray();
 
     return new Response(JSON.stringify(cartProducts),{
         status: 202,

@@ -3,10 +3,19 @@ import NewsLetterComp from "@/components/news-letter";
 import ProductListCard from "@/components/product-list-card";
 import SectionHeading from "@/components/section-heading";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { products } from "@/lib/product-data";
+import { Product } from "@/lib/product-data";
 import InputCb from "@/components/base-components/input";
 
-export default function Home() {
+const Home = async () => {
+
+  const apiResponse = await fetch(process.env.BASE_URL + "/api/products");
+  const products = await apiResponse.json();
+
+  const apiResponseCart = await fetch(process.env.BASE_URL + "/api/user/1/cart",{
+        cache: 'no-cache'
+    })
+    const cartItems = await apiResponseCart.json();
+
   return (
     <div>
       <main >
@@ -19,9 +28,9 @@ export default function Home() {
           <Carousel className="w-full pt-5" opts={{loop: true,}}>
             <CarouselContent>
               {
-                products.map(product => (
-                  <CarouselItem className="basis-1/5">
-                    <ProductListCard product={product} />
+                products.map( (product : Product) => (
+                  <CarouselItem key={product.id} className="basis-1/5">
+                    <ProductListCard product={product} initialcartItems={cartItems}/>
                   </CarouselItem>
                 ))
               }
@@ -49,3 +58,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;

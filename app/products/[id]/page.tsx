@@ -1,12 +1,12 @@
 import NotFoundPage from '@/app/not-found';
-import { products } from '../../../lib/product-data';
 import ProductDetailCard from '@/components/product-detail-card';
 
 
 async function ProductDetailPage({params}: {params: {id: string}}) {
 
     const resolvedParams = await Promise.resolve(params);
-    const productdetails = products.find(product => product.id === resolvedParams.id);
+    const apiResponse = await fetch(process.env.BASE_URL + "/api/products/" + resolvedParams.id);
+    const productdetails = await apiResponse.json();
 
     if(!productdetails){
         return <NotFoundPage />
