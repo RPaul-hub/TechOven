@@ -3,6 +3,8 @@ import ProductListCard from "../../components/product-list-card";
 import { Product } from "../../lib/product-data";
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 const ProductsPage = async () => {
 
     const apiResponse = await fetch(process.env.BASE_URL + "/api/products");

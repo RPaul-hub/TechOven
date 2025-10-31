@@ -1,6 +1,7 @@
 import NotFoundPage from '@/app/not-found';
 import ProductDetailCard from '@/components/product-detail-card';
 
+export const dynamic = 'force-dynamic';
 
 async function ProductDetailPage({params}: {params: {id: string}}) {
 

@@ -6,6 +6,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Product } from "@/lib/product-data";
 import InputCb from "@/components/base-components/input";
 
+export const dynamic = 'force-dynamic';
+
 const Home = async () => {
 
   const apiResponse = await fetch(process.env.BASE_URL + "/api/products");

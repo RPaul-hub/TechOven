@@ -1,5 +1,7 @@
 import ShoppingCartList from "./shoppingcartlist";
 
+export const dynamic = 'force-dynamic';
+
 const CartPage = async () => {
 
     const apiResponse = await fetch(process.env.BASE_URL + "/api/user/1/cart",{
